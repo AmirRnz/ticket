@@ -1,3 +1,5 @@
+import TicketForm from "@/components/TicketForm";
+
 export async function generateMetadata({ params }: TicketPageProps) {
   const resolvedParams = await params;
   return {
@@ -15,7 +17,7 @@ const TicketPage = async ({ params }: TicketPageProps) => {
   return (
     <>
       <div>TicketPage {resolvedParams.id}</div>
-      <p>hi</p>
+      <TicketForm />
     </>
   );
 };
