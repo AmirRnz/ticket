@@ -1,5 +1,7 @@
 import Ticket from "@/modules/Ticket";
 import { NextResponse } from "next/server";
+import { TicketDataFromDb } from "@/types/types";
+
 interface TicketData {
   title: string;
   description: string;
@@ -26,6 +28,16 @@ export async function POST(req: Request) {
     await Ticket.create(ticketData);
 
     return NextResponse.json({ message: "Ticket Created" }, { status: 201 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ message: "error", error }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  try {
+    const tickets: TicketDataFromDb[] = await Ticket.find();
+    return NextResponse.json({ tickets }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ message: "error", error }, { status: 500 });

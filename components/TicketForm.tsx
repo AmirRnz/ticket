@@ -12,9 +12,42 @@ interface TicketFormData {
   category: string; // You can use a union type if needed (e.g., "hardware problem" | "software problem" | "project")
   active: boolean;
 }
+interface TicketFormUpdateData {
+  _id: string;
+  title?: string;
+  description?: string;
+  category?: string;
+  priority?: number;
+  progress?: number;
+  status?: string;
+  active?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+}
 
-const TicketForm = () => {
+const TicketForm = ({ ticket }: { ticket: TicketFormUpdateData }) => {
+  const EDITMODE = ticket._id === "new" ? false : true;
   const router = useRouter();
+
+  const startingTicketData: TicketFormData = {
+    title: "",
+    description: "",
+    priority: 1,
+    progress: 0,
+    status: "not started",
+    category: "Hardware problem",
+    active: true,
+  };
+  if (EDITMODE) {
+    startingTicketData["title"] = ticket.title ?? "no title";
+    startingTicketData["description"] = ticket.description ?? "no title";
+    startingTicketData["priority"] = ticket.priority ?? 1;
+    startingTicketData["progress"] = ticket.progress ?? 0;
+    startingTicketData["status"] = ticket.status ?? "no title";
+    startingTicketData["category"] = ticket.category ?? "no title";
+  }
+  const [formData, setFormData] = useState(startingTicketData);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -34,30 +67,33 @@ const TicketForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const res = await fetch("/api/Tickets", {
-      method: "POST",
-      body: JSON.stringify(formData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!res.ok) {
-      throw new Error("failed to create Ticket.");
+    if (EDITMODE) {
+      const res = await fetch(`/api/Tickets/${ticket._id}`, {
+        method: "PUT",
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) {
+        throw new Error("failed to update Ticket.");
+      }
+    } else {
+      const res = await fetch("/api/Tickets", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) {
+        throw new Error("failed to create Ticket.");
+      }
     }
+
     router.refresh();
     router.push("/");
   };
-
-  const startingTicketData: TicketFormData = {
-    title: "",
-    description: "",
-    priority: 1,
-    progress: 0,
-    status: "not started",
-    category: "Hardware problem",
-    active: true,
-  };
-  const [formData, setFormData] = useState(startingTicketData);
 
   return (
     <div className="flex justify-center">
@@ -66,7 +102,7 @@ const TicketForm = () => {
         method="POST"
         onSubmit={handleSubmit}
       >
-        <h3>Create your ticket</h3>
+        <h3>{EDITMODE ? "Update your Ticket" : "Create your Ticket"}</h3>
         <label>Title</label>
         <input
           id="title"
@@ -165,7 +201,11 @@ const TicketForm = () => {
           value={formData.active.toString()} // Convert boolean to string for input value
           onChange={handleChange}
         />
-        <input type="submit" className="btn max-w-xs" value="Create Ticket" />
+        <input
+          type="submit"
+          className="btn max-w-xs"
+          value={EDITMODE ? "Update Ticket" : "Create Ticket"}
+        />
       </form>
     </div>
   );
