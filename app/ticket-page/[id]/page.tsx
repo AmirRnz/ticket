@@ -1,14 +1,15 @@
 import TicketForm from "@/components/TicketForm";
 
+interface TicketPageProps {
+  params: Promise<{ id: string }>;
+}
+
 export async function generateMetadata({ params }: TicketPageProps) {
   const resolvedParams = await params;
   return {
     title: `Ticket #${resolvedParams.id}`,
     description: `Details for ticket ${resolvedParams.id}`,
   };
-}
-interface TicketPageProps {
-  params: { id: string };
 }
 
 const getTicketById = async (id: string) => {
