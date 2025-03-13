@@ -2,12 +2,9 @@ import Ticket from "@/modules/Ticket";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET({ params }: { params: { id: string } }) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const foundTicket = await Ticket.findOne({ _id: id });
     return NextResponse.json({ foundTicket }, { status: 200 });
   } catch (error) {
@@ -15,10 +12,7 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE({ params }: { params: { id: string } }) {
   try {
     const { id } = await params;
     await Ticket.findByIdAndDelete(id);
