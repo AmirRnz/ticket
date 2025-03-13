@@ -7,11 +7,9 @@ export async function generateMetadata({ params }: TicketPageProps) {
     description: `Details for ticket ${resolvedParams.id}`,
   };
 }
-type TicketPageProps = {
-  params: {
-    id: string;
-  };
-};
+interface TicketPageProps {
+  params: { id: string };
+}
 
 const getTicketById = async (id: string) => {
   const res = await fetch(`http://localhost:3000/api/Tickets/${id}`, {
