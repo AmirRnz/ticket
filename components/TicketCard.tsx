@@ -9,7 +9,7 @@ interface TicketCardProps {
   id: number;
   ticket: TicketDataFromDb;
 }
-const TicketCard = ({ id, ticket }: TicketCardProps) => {
+const TicketCard = ({ ticket }: TicketCardProps) => {
   const formatTimestamp = (timestamp: string | number): string => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
